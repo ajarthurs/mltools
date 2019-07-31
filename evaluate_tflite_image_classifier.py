@@ -62,13 +62,19 @@ def parse_args(argv=None):
     )
 
   parser.add_argument(
-    '--log_path',
-    help='Path to log directory. Default is same directory as this script.',
+    '-o', '--metrics_output_path',
+    help='Path to metrics output pickle file.',
+    required=True,
     )
 
   parser.add_argument(
     '--mlperf_compat_output',
     help='Path to MLPerf-compatible output file that will store results.',
+    )
+
+  parser.add_argument(
+    '--log_path',
+    help='Path to log directory. Default is same directory as this script.',
     )
 
   if argv:
@@ -167,8 +173,8 @@ def run(args):
       dataset_batch_queue['num_batches'] - 1,
       100*metrics[batch_id]['batch_accuracy']['cumulative_accuracy'],
       ))
-  with open(os.path.join(args.log_path, 'metrics.pickle'), 'wb') as f:
-    pickle.dump(metrics, f)
+  with open(args.metrics_output_path, 'wb') as f:
+    pickle.dump((__file__, args, metrics), f)
   return 0
 
 if __name__ == '__main__':
