@@ -87,7 +87,6 @@ def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file,
         Returns:
           List of images at batch index.
   """
-  import cv2
   dataset = {}
   dataset_valmap = os.path.join(dataset_split_path, dataset_split_map_file) # FILENAME GT_LABEL_ID
   with open(dataset_valmap, 'r') as f:
@@ -101,6 +100,7 @@ def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file,
   dataset['num_batches'] = int(math.ceil(dataset['num_samples'] / float(batch_size)))
 
   def _cv2_read_batch_fn(batch_id):
+    import cv2
     batch_index = batch_id * batch_size
     batch_files = dataset['files'][batch_index:batch_index + batch_size]
     input_dtype = model_input_details[0]['dtype']
