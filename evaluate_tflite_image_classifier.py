@@ -30,6 +30,13 @@ def parse_args(argv=None):
     )
 
   parser.add_argument(
+    '--delegate_to_tpu',
+    help='Delegate inference to TPU.',
+    type=bool,
+    default=False,
+    )
+
+  parser.add_argument(
     '-l', '--model_labels_offset',
     help='An offset for the labels in the dataset. This flag is primarily used to evaluate architectures such as ResNet that do not use a background class.',
     type=int,
@@ -90,6 +97,7 @@ def run(args):
   interpreters = create_interpreter_pool(
     tflite_path=args.tflite_model_path,
     size=args.batch_size,
+    delegate_to_tpu=args.delegate_to_tpu,
     )
   dataset_batch_queue, read_batch_fn = create_dataset_split_batch_queue(
     dataset_split_path=args.dataset_valsplit_path,

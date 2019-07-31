@@ -29,12 +29,13 @@ def evaluate_image(interpreter, image):
   return np.squeeze(predictions)
 
 
-def create_interpreter_pool(size, tflite_path=None, tflite_model=None):
+def create_interpreter_pool(size, tflite_path=None, tflite_model=None, delegate_to_tpu=False):
   """Create a pool of TFLite interpreters.
     Args:
       size: Target size of pool.
       tflite_path: File path to TFLite model. Takes precedence over tflite_model if specified.
       tflite_model: Preloaded TFLite model.
+      delegate_to_tpu: Delegate inference to TPU.
 
     Returns:
       interpreters: List of TFLite interpreters.
@@ -46,7 +47,20 @@ def create_interpreter_pool(size, tflite_path=None, tflite_model=None):
     tflite_model = open(tflite_path, 'rb').read()
   if not tflite_model:
     raise ValueError('Invalid TFLite model. Check either tflite_path (%s) or tflite_model.' % tflite_path)
-  interpreters = [tflite.Interpreter(model_content=tflite_model) for i in range(size)]
+  if delegate_to_tpu:
+    from tensorflow.lite.python.interpreter import load_delegate
+    interpreters = [
+      tflite.Interpreter(
+        model_content=tflite_model,
+        experimental_delegates=[load_delegate('libedgetpu.so.1.0')],
+        ) for i in range(size)
+      ]
+  else:
+    interpreters = [
+      tflite.Interpreter(
+        model_content=tflite_model,
+        ) for i in range(size)
+      ]
   for interpreter in interpreters:
     interpreter.allocate_tensors()
   return interpreters
