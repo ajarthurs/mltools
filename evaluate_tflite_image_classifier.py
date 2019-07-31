@@ -159,7 +159,7 @@ def run(args):
     total_images += num_images
     cumulative_accuracy = total_true_positives / total_images
     cumulative_top_5_accuracy = total_top_5_true_positives / total_images
-    metrics[batch_id]['batch_accuracy'] = {
+    metrics[batch_id] = {
       'gtlabels': gtlabel_batch,
       'top_5_labels': top_5_labels,
       'accuracy': batch_accuracy,
@@ -167,11 +167,11 @@ def run(args):
       'cumulative_accuracy': cumulative_accuracy,
       'cumulative_top_5_accuracy': cumulative_top_5_accuracy,
       }
-    log.debug(metrics[batch_id]['batch_accuracy'])
+    log.debug(metrics[batch_id])
     log.info('Batch %d of %d: %0.2f%%' % (
       batch_id,
       dataset_batch_queue['num_batches'] - 1,
-      100*metrics[batch_id]['batch_accuracy']['cumulative_accuracy'],
+      100*metrics[batch_id]['cumulative_accuracy'],
       ))
   with open(args.metrics_output_path, 'wb') as f:
     pickle.dump((__file__, args, metrics), f)
