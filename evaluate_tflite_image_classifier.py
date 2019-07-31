@@ -6,7 +6,6 @@ Requires Tensorflow 1.13+.
 import logging
 import logging.config
 import os
-import pickle
 
 if __name__ == '__main__':
   import argparse
@@ -75,6 +74,7 @@ log = logging.getLogger(__name__)
 def run(args):
   """Infer dataset's validation images with a TFLite image classifier.
   """
+  import pickle
   import numpy as np
 
   from cv2_preprocessors import preprocessors
