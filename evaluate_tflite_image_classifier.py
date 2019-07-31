@@ -68,7 +68,7 @@ def parse_args(argv=None):
     )
 
   parser.add_argument(
-    '--mlperf_compat_output',
+    '--mlperf_compat_output_path',
     help='Path to MLPerf-compatible output file that will store results.',
     )
 
@@ -118,8 +118,8 @@ def run(args):
   total_top_5_true_positives = 0
   total_images = 0
   metrics = [{}]*dataset_batch_queue['num_batches']
-  if args.mlperf_compat_output:
-    mlperf_log = open(args.mlperf_compat_output, 'w')
+  if args.mlperf_compat_output_path:
+    mlperf_log = open(args.mlperf_compat_output_path, 'w')
   log.info('Processing %d batches of size %d...' % (dataset_batch_queue['num_batches'], args.batch_size))
   for batch_id in range(dataset_batch_queue['num_batches']):
     image_batch, gtlabel_batch = zip(*[image_map for image_map in read_batch_fn(batch_id)])
@@ -141,7 +141,7 @@ def run(args):
       )
     batch_accuracy = batch_true_positives / num_images
     batch_top_5_accuracy = batch_top_5_true_positives / num_images
-    if args.mlperf_compat_output:
+    if args.mlperf_compat_output_path:
       tp = total_true_positives
       ti = total_images
       for i in range(num_images):
