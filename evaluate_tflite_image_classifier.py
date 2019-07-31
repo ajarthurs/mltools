@@ -82,7 +82,7 @@ def parse_args(argv=None):
   else:
     args = parser.parse_args()
 
-  from python_logging import create_log_config
+  from mltools.python_logging import create_log_config
   log_config = create_log_config(
     log_path=args.log_path,
     )
@@ -97,8 +97,8 @@ def run(args):
   import pickle
   import numpy as np
 
-  from python_threading import create_thread, run_thread_pool, join_thread_pool
-  from tflite_utils import create_dataset_split_batch_queue, create_interpreter_pool, create_image_classification_thread_pool
+  from mltools.python_threading import create_thread, run_thread_pool, join_thread_pool
+  from mltools.tflite_utils import create_dataset_split_batch_queue, create_interpreter_pool, create_image_classification_thread_pool
 
   interpreters = create_interpreter_pool(
     tflite_path=args.tflite_model_path,
