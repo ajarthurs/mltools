@@ -112,8 +112,8 @@ def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file,
       cv2_image = cv2.imread(image_file)
       preprocessed_image = model_preprocessor_fn(cv2_image)
       image = np.array(preprocessed_image)
-      if input_dtype == np.int8:
-        image = (np.round(image/input_scale) + input_zp).astype(np.int8)
+      if input_dtype == np.int8 or input_dtype == np.uint8:
+        image = (np.round(image/input_scale) + input_zp).astype(input_dtype)
       yield [image, dataset['gtlabels'][batch_index + i] + model_labels_offset]
       i += 1
 
