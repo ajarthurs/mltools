@@ -6,10 +6,12 @@ Requires Tensorflow 1.13+.
 import logging
 import logging.config
 import os
+from mltools.cv2_preprocessors import preprocessors
 
-if __name__ == '__main__':
+log = logging.getLogger(__name__)
+
+def parse_args(argv=None):
   import argparse
-  from cv2_preprocessors import preprocessors
 
   parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -62,14 +64,19 @@ if __name__ == '__main__':
     help='Path to MLPerf-compatible output file that will store results.',
     )
 
-  args = parser.parse_args()
+  if argv:
+    args = parser.parse_args(argv)
+  else:
+    args = parser.parse_args()
+
   from python_logging import create_log_config
   log_config = create_log_config(
     log_path=args.log_path,
     )
   logging.config.dictConfig(log_config)
-
-log = logging.getLogger(__name__)
+  log = logging.getLogger(__name__)
+  log.info('%s %s' % (os.path.basename(__file__), args))
+  return args
 
 def run(args):
   """Infer dataset's validation images with a TFLite image classifier.
@@ -77,7 +84,6 @@ def run(args):
   import pickle
   import numpy as np
 
-  from cv2_preprocessors import preprocessors
   from python_threading import create_thread, run_thread_pool, join_thread_pool
   from tflite_utils import create_dataset_split_batch_queue, create_interpreter_pool, create_image_classification_thread_pool
 
@@ -158,5 +164,5 @@ def run(args):
   return 0
 
 if __name__ == '__main__':
-  log.info('%s %s' % (os.path.basename(__file__), args))
+  args = parse_args()
   run(args)
