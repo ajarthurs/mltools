@@ -25,7 +25,7 @@ def parse_args(argv=None):
   parser.add_argument(
     '-p', '--model_preprocessor',
     help='Model preprocessor.',
-    choices=preprocessors.keys(),
+    choices=preprocessors().keys(),
     required=True,
     )
 
@@ -91,6 +91,7 @@ def parse_args(argv=None):
   log.info('%s %s' % (os.path.basename(__file__), args))
   return args
 
+
 def run(args):
   """Infer dataset's validation images with a TFLite image classifier.
   """
@@ -111,7 +112,7 @@ def run(args):
     batch_size=args.batch_size,
     max_samples=args.max_samples,
     model_input_details=interpreters[0].get_input_details(),
-    model_preprocessor_fn=preprocessors[args.model_preprocessor],
+    model_preprocessor_fn=preprocessors()[args.model_preprocessor],
     model_labels_offset=args.model_labels_offset,
     )
   total_true_positives = 0
@@ -176,6 +177,7 @@ def run(args):
   with open(args.metrics_output_path, 'wb') as f:
     pickle.dump((__file__, args, metrics), f)
   return 0
+
 
 if __name__ == '__main__':
   args = parse_args()

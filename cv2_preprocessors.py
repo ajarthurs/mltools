@@ -67,7 +67,8 @@ def pre_process_mobilenet(img, need_transpose=False):
   return img
 
 
-preprocessors = {
-  'vgg': pre_process_vgg,
-  'mobilenet': pre_process_mobilenet,
-}
+def preprocessors():
+  return {
+    'vgg': pre_process_vgg,
+    'mobilenet': pre_process_mobilenet,
+  }
