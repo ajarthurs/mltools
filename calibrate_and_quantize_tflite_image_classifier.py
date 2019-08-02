@@ -38,8 +38,7 @@ def parse_args(argv=None):
   parser.add_argument(
     '--delegate_to_tpu',
     help='Delegate inference to TPU.',
-    type=bool,
-    default=False,
+    action='store_true',
     )
 
   parser.add_argument(

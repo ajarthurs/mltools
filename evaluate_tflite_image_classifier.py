@@ -32,8 +32,7 @@ def parse_args(argv=None):
   parser.add_argument(
     '--delegate_to_tpu',
     help='Delegate inference to TPU.',
-    type=bool,
-    default=False,
+    action='store_true',
     )
 
   parser.add_argument(
@@ -58,6 +57,7 @@ def parse_args(argv=None):
   parser.add_argument(
     '-b', '--batch_size',
     help='The number of samples in each batch. Default is number of CPUs.',
+    type=int,
     default=os.cpu_count(),
     )
 
