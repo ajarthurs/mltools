@@ -66,7 +66,7 @@ def create_interpreter_pool(size, tflite_path=None, tflite_model=None, delegate_
   return interpreters
 
 
-def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file, batch_size, model_input_details, model_preprocessor_fn, model_labels_offset, max_samples=None):
+def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file, batch_size, model_input_details, model_preprocessor_fn, model_labels_offset, max_samples=None, quantize_input=True):
   """Create a batch queue that preprocesses a dataset for a given model.
 
   Args:
@@ -77,6 +77,7 @@ def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file,
     model_preprocessor_fn: Function that preprocesses each image to fit the model.
     model_labels_offset: Label offset.
     max_samples: Maximum samples to include. Default is entire split.
+    quantize_input: Quantize images during preprocessing. Only applies to quantized models.
 
   Returns:
     dataset: Dictionary of dataset split details.
@@ -112,7 +113,7 @@ def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file,
       cv2_image = cv2.imread(image_file)
       preprocessed_image = model_preprocessor_fn(cv2_image)
       image = np.array(preprocessed_image)
-      if input_dtype == np.int8 or input_dtype == np.uint8:
+      if quantize_input and (input_dtype == np.int8 or input_dtype == np.uint8):
         image = (np.round(image/input_scale) + input_zp).astype(input_dtype)
       yield [image, dataset['gtlabels'][batch_index + i] + model_labels_offset]
       i += 1

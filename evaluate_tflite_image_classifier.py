@@ -30,6 +30,12 @@ def parse_args(argv=None):
     )
 
   parser.add_argument(
+    '--no_quantize_input',
+    help='Do not quantize images during preprocessing. Only applies to quantized models.',
+    action='store_true',
+    )
+
+  parser.add_argument(
     '--delegate_to_tpu',
     help='Delegate inference to TPU.',
     action='store_true',
@@ -114,6 +120,7 @@ def run(args):
     model_input_details=interpreters[0].get_input_details(),
     model_preprocessor_fn=preprocessors()[args.model_preprocessor],
     model_labels_offset=args.model_labels_offset,
+    quantize_input=(not args.no_quantize_input),
     )
   total_true_positives = 0
   total_top_5_true_positives = 0
