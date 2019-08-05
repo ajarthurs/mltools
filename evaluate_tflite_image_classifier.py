@@ -36,6 +36,12 @@ def parse_args(argv=None):
     )
 
   parser.add_argument(
+    '--no_postprocess_predictions',
+    help='Do not postprocess the model output.',
+    action='store_true',
+    )
+
+  parser.add_argument(
     '--delegate_to_tpu',
     help='Delegate inference to TPU.',
     action='store_true',
@@ -139,14 +145,22 @@ def run(args):
       )
     run_thread_pool(threads)
     predictions = np.array(join_thread_pool(threads))
-    top_5_labels = [prediction.argsort()[-5:] for prediction in predictions]
-    log.debug({'batch_top_5_labels': top_5_labels})
-    batch_true_positives = np.sum(
-      [int(top_5_labels[i][-1] == gtlabel_batch[i]) for i in range(num_images)],
-      )
-    batch_top_5_true_positives = np.sum(
-      [int(gtlabel_batch[i] in top_5_labels[i]) for i in range(num_images)],
-      )
+    log.debug({'predictions': predictions})
+    if args.no_postprocess_predictions:
+      top_5_labels = predictions
+      batch_true_positives = np.sum(
+        [int(predictions[i] == gtlabel_batch[i]) for i in range(num_images)],
+        )
+      batch_top_5_true_positives = batch_true_positives
+    else:
+      top_5_labels = [prediction.argsort()[-5:] for prediction in predictions]
+      log.debug({'batch_top_5_labels': top_5_labels})
+      batch_true_positives = np.sum(
+        [int(top_5_labels[i][-1] == gtlabel_batch[i]) for i in range(num_images)],
+        )
+      batch_top_5_true_positives = np.sum(
+        [int(gtlabel_batch[i] in top_5_labels[i]) for i in range(num_images)],
+        )
     batch_accuracy = batch_true_positives / num_images
     batch_top_5_accuracy = batch_top_5_true_positives / num_images
     if args.mlperf_compat_output_path:
