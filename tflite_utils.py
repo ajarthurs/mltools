@@ -21,6 +21,10 @@ def evaluate_image(interpreter, image):
   """
   input_details = interpreter.get_input_details()
   output_details = interpreter.get_output_details()
+  log.debug({
+    'Input info': input_details,
+    'Output info': output_details,
+    })
   input_shape = input_details[0]['shape']
   image = image.reshape(input_shape)
   interpreter.set_tensor(input_details[0]['index'], image)
