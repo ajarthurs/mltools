@@ -106,21 +106,27 @@ def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file,
     dataset['num_samples'] = len(image_maps)
   dataset['num_batches'] = int(math.ceil(dataset['num_samples'] / float(batch_size)))
 
+  def _maybe_quantize(image):
+    input_dtype = model_input_details[0]['dtype']
+    if quantize_input and (input_dtype == np.int8 or input_dtype == np.uint8):
+      input_quant = model_input_details[0]['quantization']
+      input_scale = input_quant[0]
+      input_zp = input_quant[1]
+      quant_image = (np.round(image/input_scale) + input_zp).astype(input_dtype)
+    else:
+      quant_image = image
+    return quant_image
+
   def _cv2_read_batch_fn(batch_id):
     import cv2
     batch_index = batch_id * batch_size
     batch_files = dataset['files'][batch_index:batch_index + batch_size]
-    input_dtype = model_input_details[0]['dtype']
-    input_quant = model_input_details[0]['quantization']
-    input_scale = input_quant[0]
-    input_zp = input_quant[1]
     i = 0
     for image_file in batch_files:
       cv2_image = cv2.imread(image_file)
       preprocessed_image = model_preprocessor_fn(cv2_image)
       image = np.array(preprocessed_image)
-      if quantize_input and (input_dtype == np.int8 or input_dtype == np.uint8):
-        image = (np.round(image/input_scale) + input_zp).astype(input_dtype)
+      image = _maybe_quantize(image)
       yield [image, dataset['gtlabels'][batch_index + i] + model_labels_offset]
       i += 1
 
