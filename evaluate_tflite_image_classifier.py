@@ -174,8 +174,8 @@ def run(args):
         tp += int(prediction == gtlabel_batch[i])
         ti += 1
         mlperf_log.write('self.good = %d/%d = %.3f, result = %d, expected = %d\n' % (
-          batch_id*args.batch_size + i,
-          dataset_batch_queue['num_samples'] - 1,
+          tp,
+          ti,
           tp / ti,
           prediction,
           gtlabel_batch[i],
