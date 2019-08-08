@@ -133,7 +133,7 @@ def run(args):
   total_images = 0
   metrics = [{}]*dataset_batch_queue['num_batches']
   if args.mlperf_compat_output_path:
-    mlperf_log = open(args.mlperf_compat_output_path, 'w')
+    mlperf_log = open(args.mlperf_compat_output_path, 'w', buffering=1)
   log.info('Processing %d batches of size %d...' % (dataset_batch_queue['num_batches'], args.batch_size))
   for batch_id in range(dataset_batch_queue['num_batches']):
     image_batch, gtlabel_batch = zip(*[image_map for image_map in read_batch_fn(batch_id)])
