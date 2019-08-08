@@ -173,7 +173,7 @@ def run(args):
           prediction = top_5_labels[i][-1]
         tp += int(prediction == gtlabel_batch[i])
         ti += 1
-        mlperf_log.write('self.good = %d/%d = %.3f, result = %d, expected = %d\n' % (
+        mlperf_log.write('self.good = %d/%d = %.4f, result = %d, expected = %d\n' % (
           tp,
           ti,
           tp / ti,
