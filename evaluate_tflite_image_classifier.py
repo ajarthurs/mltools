@@ -167,13 +167,17 @@ def run(args):
       tp = total_true_positives
       ti = total_images
       for i in range(num_images):
-        tp += int(top_5_labels[i][-1] == gtlabel_batch[i])
+        if args.no_postprocess_predictions:
+          prediction = top_5_labels[i]
+        else:
+          prediction = top_5_labels[i][-1]
+        tp += int(prediction == gtlabel_batch[i])
         ti += 1
         mlperf_log.write('self.good = %d/%d = %.3f, result = %d, expected = %d\n' % (
           batch_id*args.batch_size + i,
           dataset_batch_queue['num_samples'] - 1,
           tp / ti,
-          top_5_labels[i][-1],
+          prediction,
           gtlabel_batch[i],
         ))
     total_true_positives += batch_true_positives
