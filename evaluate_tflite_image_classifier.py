@@ -30,6 +30,12 @@ def parse_args(argv=None):
     )
 
   parser.add_argument(
+    '--read_from_numpy',
+    help='Load preprocessed NumPy array files instead of raw image files.',
+    action='store_true',
+    )
+
+  parser.add_argument(
     '--no_quantize_input',
     help='Do not quantize images during preprocessing. Only applies to quantized models.',
     action='store_true',
@@ -127,6 +133,7 @@ def run(args):
     model_preprocessor_fn=preprocessors()[args.model_preprocessor],
     model_labels_offset=args.model_labels_offset,
     quantize_input=(not args.no_quantize_input),
+    read_from_numpy=args.read_from_numpy,
     )
   total_true_positives = 0
   total_top_5_true_positives = 0

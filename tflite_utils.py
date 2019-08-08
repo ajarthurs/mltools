@@ -72,16 +72,17 @@ def create_interpreter_pool(size, tflite_path=None, tflite_model=None, delegate_
   return interpreters
 
 
-def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file, batch_size, model_input_details, model_preprocessor_fn, model_labels_offset, max_samples=None, quantize_input=True):
+def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file, batch_size, model_input_details, model_preprocessor_fn, model_labels_offset, read_from_numpy=False, max_samples=None, quantize_input=True):
   """Create a batch queue that preprocesses a dataset for a given model.
 
   Args:
     dataset_split_path: Path to dataset split's directory.
     dataset_split_map_file: Name of dataset split's map file.
     batch_size: Number of images per batch. Default is the entire dataset split.
-    model_input_details: TFLite model input details (see tflite.Interpreter.get_input_details()).
-    model_preprocessor_fn: Function that preprocesses each image to fit the model.
+    model_input_details: TFLite model input details (see tflite.Interpreter.get_input_details()). Not used if `read_from_numpy` is True.
+    model_preprocessor_fn: Function that preprocesses each image to fit the model. Not used if `read_from_numpy` is True.
     model_labels_offset: Label offset.
+    read_from_numpy: Return a callback that loads preprocessed images from NumPy files. Default is preprocess images on-the-fly.
     max_samples: Maximum samples to include. Default is entire split.
     quantize_input: Quantize images during preprocessing. Only applies to quantized models.
 
@@ -117,6 +118,16 @@ def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file,
       quant_image = image
     return quant_image
 
+  def _numpy_read_batch_fn(batch_id):
+    batch_index = batch_id * batch_size
+    batch_files = dataset['files'][batch_index:batch_index + batch_size]
+    i = 0
+    for image_file in batch_files:
+      image = np.load('%s.npy' % image_file)
+      image = _maybe_quantize(image)
+      yield [image, dataset['gtlabels'][batch_index + i] + model_labels_offset]
+      i += 1
+
   def _cv2_read_batch_fn(batch_id):
     import cv2
     batch_index = batch_id * batch_size
@@ -130,7 +141,11 @@ def create_dataset_split_batch_queue(dataset_split_path, dataset_split_map_file,
       yield [image, dataset['gtlabels'][batch_index + i] + model_labels_offset]
       i += 1
 
-  return dataset, _cv2_read_batch_fn
+  if read_from_numpy:
+    read_batch_fn = _numpy_read_batch_fn
+  else:
+    read_batch_fn = _cv2_read_batch_fn
+  return dataset, read_batch_fn
 
 
 def create_image_classification_thread_pool(interpreters, image_batch, create_thread_fn):
