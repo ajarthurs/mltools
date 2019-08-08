@@ -21,10 +21,6 @@ def evaluate_image(interpreter, image):
   """
   input_details = interpreter.get_input_details()
   output_details = interpreter.get_output_details()
-  log.debug({
-    'Input info': input_details,
-    'Output info': output_details,
-    })
   input_shape = input_details[0]['shape']
   image = image.reshape(input_shape)
   interpreter.set_tensor(input_details[0]['index'], image)
@@ -67,6 +63,12 @@ def create_interpreter_pool(size, tflite_path=None, tflite_model=None, delegate_
       ]
   for interpreter in interpreters:
     interpreter.allocate_tensors()
+  input_details = interpreters[0].get_input_details()
+  output_details = interpreters[0].get_output_details()
+  log.debug({
+    'Input info': input_details,
+    'Output info': output_details,
+    })
   return interpreters
 
 
