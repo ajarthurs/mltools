@@ -82,7 +82,7 @@ def run(args):
 
   image_file_list = None
   with open(args.image_file_list_path) as f:
-    image_file_list = f.read().splitlines()
+    image_file_list = [l.split()[0] for l in f.readlines()]
   model_preprocessor_fn=preprocessors()[args.model_preprocessor]
 
   def _input_gen():
