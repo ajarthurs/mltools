@@ -6,7 +6,7 @@ Requires Tensorflow 1.13+.
 import logging
 import logging.config
 import os
-from mltools.cv2_preprocessors import preprocessors
+from cv2_preprocessors import preprocessors
 
 log = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ def parse_args(argv=None):
   else:
     args = parser.parse_args()
 
-  from mltools.python_logging import create_log_config
+  from python_logging import create_log_config
   log_config = create_log_config(
     log_path=args.log_path,
     )
