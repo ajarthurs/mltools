@@ -1,6 +1,6 @@
 # Top-level Makefile
 
-SUBDIRS := schemas
+SUBDIRS := src
 
 # Top-level targets.
 all clean: $(SUBDIRS) FORCE
