@@ -9,7 +9,7 @@
 #include "../tflite/tflite_v3_reader.h"
 #include "../tflite/tflite_v3_json_printer.h"
 
-#define BUF_SIZE (4194304 * sizeof(char))
+#define BUF_SIZE (8388608 * sizeof(char))
 #define MODEL "deeplab"
 //#define MODEL "ssd_mobilenet_v1_coco_uint8"
 
