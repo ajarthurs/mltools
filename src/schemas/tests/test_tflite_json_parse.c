@@ -55,7 +55,8 @@ int main()
       &s
       );
   fwrite(b, sizeof(char), s, tflite);
-  // Done. Free TFLite buffer.
+  // Done.
+  fclose(tflite); tflite = NULL;
   flatcc_builder_aligned_free(b); b = NULL;
 cleanup_all:
   flatcc_builder_clear(&builder);
