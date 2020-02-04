@@ -10,13 +10,15 @@
 #include "../tflite/tflite_v3_json_printer.h"
 
 #define BUF_SIZE (4194304 * sizeof(char))
+#define MODEL "deeplab"
+//#define MODEL "ssd_mobilenet_v1_coco_uint8"
 
 int main()
 {
   char *b = malloc(BUF_SIZE);
   flatcc_json_printer_t json_printer;
-  FILE *f = fopen("deeplab.tflite", "rb"),
-       *json = fopen("deeplab.json", "w");
+  FILE *f = fopen(MODEL ".tflite", "rb"),
+       *json = fopen(MODEL ".json", "w");
   if(
       !b ||
       !f ||

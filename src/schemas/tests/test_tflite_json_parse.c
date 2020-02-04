@@ -9,14 +9,14 @@
 #include "../tflite/tflite_v3_json_parser.h"
 
 #define BUF_SIZE (33554432 * sizeof(char))
-#define JSON_FILE "deeplab-noargmax.json"
+#define MODEL "deeplab-noargmax"
 
 int main()
 {
   flatcc_builder_t builder;
   flatcc_json_parser_t json_parser;
-  FILE *json = fopen(JSON_FILE, "r"),
-       *tflite = fopen("deeplab-noargmax.tflite", "wb");
+  FILE *json = fopen(MODEL ".json", "r"),
+       *tflite = fopen(MODEL ".tflite", "wb");
   char *b = malloc(BUF_SIZE);
   size_t s;
   if(
@@ -41,7 +41,7 @@ int main()
   {
     fprintf(
         stderr,
-        JSON_FILE ":%d:%d: %s\n",
+        MODEL ".json:%d:%d: %s\n",
         (int)json_parser.line,
         (int)(json_parser.error_loc - json_parser.line_start + 1),
         flatcc_json_parser_error_string(json_parser.error)
