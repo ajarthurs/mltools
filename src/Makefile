@@ -5,10 +5,13 @@ PROGRAMS := quantize
 SUBDIRS := schemas
 TFLITE_SCHEMA_HDRS := $(wildcard schemas/tflite/*.h)
 
-all clean: $(SUBDIRS) FORCE
+all clean tests: $(SUBDIRS) FORCE
 FORCE:
 
 all: $(PROGRAMS)
+
+tests: FORCE
+	$(MAKE) -C $@
 
 clean:
 	rm -f $(PROGRAMS)
