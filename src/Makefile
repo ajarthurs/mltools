@@ -1,7 +1,7 @@
 # Top-level sources.
 
 # Settings.
-PROGRAMS := quantize
+PROGRAMS := clone quantize replicate tflite2json
 SUBDIRS := schemas
 TFLITE_SCHEMA_HDRS := $(wildcard schemas/tflite/*.h)
 
@@ -17,7 +17,7 @@ clean:
 	rm -f $(PROGRAMS)
 
 # Compile programs.
-quantize: quantize.c $(TFLITE_SCHEMA_HDRS)
+$(PROGRAMS): %: %.c $(TFLITE_SCHEMA_HDRS) model.h exceptions.h
 	$(CC) $(CFLAGS) -o $@ $< -lflatccrt_d
 
 # Recurse into each subdirectory, passing along the targets specified at command-line.
